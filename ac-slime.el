@@ -53,6 +53,17 @@
               (replace completion name))
           (all-completions (downcase name) collection)))
 
+(defvar ac-slime-symbol-start-pos-fn nil
+  "If non-nil, function returning start position of symbol.
+
+Set this buffer-locally in case `slime-symbol-start-pos' isn't
+helping.")
+
+(defun ac-slime-symbol-start-pos ()
+  (or (and (functionp ac-slime-symbol-start-pos-fn)
+           (funcall ac-slime-symbol-start-pos-fn))
+      (slime-symbol-start-pos)))
+
 (defvar ac-slime-current-doc nil "Holds slime docstring for current symbol.")
 (defun ac-slime-documentation (symbol-name)
   "Return a documentation string for SYMBOL-NAME."
@@ -81,7 +92,7 @@
     (candidates . ac-source-slime-fuzzy-candidates)
     (candidate-face . ac-slime-menu-face)
     (selection-face . ac-slime-selection-face)
-    (prefix . slime-symbol-start-pos)
+    (prefix . ac-slime-symbol-start-pos)
     (symbol . "l")
     (match . (lambda (prefix candidates) candidates))
     (document . ac-slime-documentation))
@@ -93,7 +104,7 @@
     (candidates . ac-source-slime-simple-candidates)
     (candidate-face . ac-slime-menu-face)
     (selection-face . ac-slime-selection-face)
-    (prefix . slime-symbol-start-pos)
+    (prefix . ac-slime-symbol-start-pos)
     (symbol . "l")
     (document . ac-slime-documentation)
     (match . ac-source-slime-case-correcting-completions))
